@@ -12,3 +12,9 @@ git add <changed_filenames>
 git commit -m 'description of changes'
 git push
 ```
+
+For compiling the C code alone with, need the python and numpy include directories.  On my computer, for example:
+
+```
+gfortran -I/anaconda2/envs/python3/lib/python3.5/site-packages/numpy/core/include -I/anaconda2/envs/python3/include/python3.5m angSep_noPython.c
+```
