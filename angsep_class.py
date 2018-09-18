@@ -5,6 +5,7 @@
 #	return DOTPROD
 
 import math
+import numpy as np
 RAD = math.pi / 180.0
 
 class angSep:
@@ -16,6 +17,7 @@ class angSep:
 		
 	def dotprod(self):
 
+		print('dotprod has ra1,dec1 = (%.7f,%.7f) and ra2,dec2 = (%.7f,%.7f)'%(self.ra1,self.dec1,self.ra2,self.dec2))
 		X1 = math.cos(self.ra1*RAD) * math.cos(self.dec1*RAD);
 		Y1 = math.sin(self.ra1*RAD) * math.cos(self.dec1*RAD);
 		Z1 = math.sin(self.dec1*RAD);

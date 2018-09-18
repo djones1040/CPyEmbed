@@ -9,7 +9,9 @@
 #include <Python.h>
 
 //compilation:
-//gfortran -I/anaconda2/envs/python3/lib/python3.5/site-packages/numpy/core/include -I/anaconda2/envs/python3/include/python3.5m -framework python angSep.c
+//gfortran -I/anaconda2/envs/python3/lib/python3.5/site-packages/numpy/core/include -I/anaconda2/envs/python3/include/python3.5m  -L/usr/local/Cellar/python3/3.7.0/Frameworks/Python.framework/Versions/3.7/lib -framework python angSep.c
+
+PyObject *pinst;
 
 struct {
   int NDUM1, NDUM2;
@@ -27,33 +29,10 @@ int main() {
   double SCALE = 1.0 ;
   
   double ANGSEP;
-
-  ANGSEP = angSep(RA1,DEC1,RA2,DEC2, SCALE);
-
-  printf(" ANGSEP(test) = %le \n", ANGSEP);
-  
-} // end main
-
-
-double angSep( double RA1,double DEC1,
-               double RA2,double DEC2, double  scale) {
-
-  // Copied from DIFFIMG on Nov 16 2015
-  //
-  // Oct 9, 2012 R. Kessler
-  // for input coords of point 1 (RA1,DEC1) and point 2 (RA2,DEC2),
-  // return angular separation. Inputs are in degrees and output
-  // is in degrees x scale ->
-  // * scale = 1    -> output is in degrees
-  // * scale = 60   -> output is in arcmin
-  // * scale = 3600 -> output is in arcsec
-
-  double X1,Y1,Z1, X2, Y2, Z2, DOTPROD, sep;
-  double RAD = RADIAN ;
-  PyObject *pName, *pModule, *pDict, *pFunc;//, *pValue;
-  PyObject *pmod, *pinst, *pValue, *pmeth, *pargs, *pclass, *pinit, *pret;
+  PyObject *pmod, *pclass, *pargs;
   
   Py_Initialize();
+  int nResult = PyRun_SimpleStringFlags("import numpy", NULL);
   pmod   = PyImport_ImportModule("angsep_class");
   if (pmod == NULL) {
     printf("ERROR importing class");
@@ -75,7 +54,34 @@ double angSep( double RA1,double DEC1,
   
   Py_DECREF(pclass);
   Py_DECREF(pargs);
-    
+  
+  ANGSEP = angSep(RA1,DEC1,RA2,DEC2, SCALE);
+
+  printf(" ANGSEP(test) = %le \n", ANGSEP);
+  int Py_FinalizeEx();
+  
+} // end main
+
+
+double angSep( double RA1,double DEC1,
+               double RA2,double DEC2, double  scale) {
+
+  // Copied from DIFFIMG on Nov 16 2015
+  //
+  // Oct 9, 2012 R. Kessler
+  // for input coords of point 1 (RA1,DEC1) and point 2 (RA2,DEC2),
+  // return angular separation. Inputs are in degrees and output
+  // is in degrees x scale ->
+  // * scale = 1    -> output is in degrees
+  // * scale = 60   -> output is in arcmin
+  // * scale = 3600 -> output is in arcsec
+
+  double X1,Y1,Z1, X2, Y2, Z2, DOTPROD, sep;
+  double RAD = RADIAN ;
+  PyObject *pName, *pModule, *pDict, *pFunc;//, *pValue;
+  PyObject *pValue, *pmeth;
+
+  Py_Initialize();
   X1 = cos(RA1*RAD) * cos(DEC1*RAD);
   Y1 = sin(RA1*RAD) * cos(DEC1*RAD);
   Z1 = sin(DEC1*RAD);
